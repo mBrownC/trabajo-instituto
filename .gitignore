@@ -56,3 +56,7 @@ database/database.sqlite
 # Ignorar archivos de despliegue si usas Laravel Forge u otros
 .deploy/
 dep/
+
+vendor/
+.env
+*.log

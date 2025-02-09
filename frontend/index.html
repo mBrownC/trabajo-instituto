@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapatos3000 - Sistema de Gestión de Tareas</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="auth-section">
+            <div class="login-container">
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Correo Electrónico" required>
+                    <input type="password" id="login-password" placeholder="Contraseña" required>
+                    <button type="submit">Iniciar Sesión</button>
+                </form>
+                <p>
+                    <a href="#" id="registro-link">Registrarse</a> | 
+                    <a href="#" id="recuperar-link">Recuperar Contraseña</a>
+                </p>
+            </div>
+
+            <div class="registro-container" style="display: none;">
+                <h2>Registro</h2>
+                <form id="registro-form">
+                    <input type="text" id="registro-nombre" placeholder="Nombre" required>
+                    <input type="text" id="registro-apellido" placeholder="Apellido" required>
+                    <input type="email" id="registro-email" placeholder="Correo Electrónico" required>
+                    <input type="password" id="registro-password" placeholder="Contraseña" required>
+                    <button type="submit">Registrarse</button>
+                </form>
+                <p><a href="#" id="login-link">Volver a Iniciar Sesión</a></p>
+            </div>
+
+            <div class="recuperacion-container" style="display: none;">
+                <h2>Recuperar Contraseña</h2>
+                <form id="recuperacion-form">
+                    <input type="email" id="recuperacion-email" placeholder="Correo Electrónico" required>
+                    <button type="submit">Enviar Instrucciones</button>
+                </form>
+                <p><a href="#" id="login-link-recuperacion">Volver a Iniciar Sesión</a></p>
+            </div>
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <h1>Mis Tareas</h1>
+            <div class="nueva-tarea">
+                <input type="text" id="tarea-titulo" placeholder="Título de la tarea">
+                <textarea id="tarea-descripcion" placeholder="Descripción"></textarea>
+                <button id="crear-tarea">Crear Tarea</button>
+            </div>
+            <div id="lista-tareas">
+                <!-- Tareas se cargarán dinámicamente -->
+            </div>
+            <button id="cerrar-sesion">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/tareas.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
