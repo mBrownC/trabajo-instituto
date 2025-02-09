@@ -10,7 +10,8 @@ class SistemaInicial
         $this->conexion = (new Database())->conectar();
     }
 
-    public function inicializarSistema($claveTextoPlano) {
+    public function inicializarSistema($claveTextoPlano)
+    {
         try {
             // Verificar si ya existe un admin
             try {
@@ -24,7 +25,7 @@ class SistemaInicial
                 error_log("Error verificando usuario admin: " . $e->getMessage());
                 return false;
             }
-    
+
             if ($count == 0) {
                 // Verificar si el rol "administrador" existe
                 try {
@@ -33,7 +34,7 @@ class SistemaInicial
                     );
                     $stmt->execute();
                     $rolId = $stmt->fetchColumn();
-    
+
                     if (!$rolId) {
                         error_log("Error: No se encontró el rol 'administrador'");
                         return false;
@@ -42,10 +43,10 @@ class SistemaInicial
                     error_log("Error verificando rol administrador: " . $e->getMessage());
                     return false;
                 }
-    
+
                 // Hashear la contraseña
                 $passwordHash = password_hash($claveTextoPlano, PASSWORD_BCRYPT);
-    
+
                 // Insertar usuario administrador
                 try {
                     $stmt = $this->conexion->prepare(

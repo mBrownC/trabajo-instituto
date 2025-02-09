@@ -43,14 +43,17 @@ try {
 
     // Enrutamiento
     switch ($accion) {
-        // Rutas de Autenticación
+            // Rutas de Autenticación
         case 'registro':
             if ($metodo === 'POST') {
                 $datos = json_decode(file_get_contents('php://input'), true);
-                
+
                 // Validaciones
                 $errores = Validador::validarCamposObligatorios([
-                    'nombre', 'apellido', 'email', 'password'
+                    'nombre',
+                    'apellido',
+                    'email',
+                    'password'
                 ], $datos);
 
                 if (!empty($errores)) {
@@ -78,10 +81,11 @@ try {
         case 'login':
             if ($metodo === 'POST') {
                 $datos = json_decode(file_get_contents('php://input'), true);
-                
+
                 // Validaciones
                 $errores = Validador::validarCamposObligatorios([
-                    'email', 'password'
+                    'email',
+                    'password'
                 ], $datos);
 
                 if (!empty($errores)) {
@@ -94,35 +98,35 @@ try {
             }
             break;
 
-            case 'solicitar_recuperacion':
-                if ($metodo === 'POST') {
-                    $datos = json_decode(file_get_contents('php://input'), true);
-                    $email = $datos['email'] ?? '';
-                    
-                    error_log("Solicitud de recuperación para: $email");
-            
-                    if (!Validador::validarEmail($email)) {
-                        error_log("Email inválido: $email");
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Email inválido']);
-                        break;
-                    }
-            
-                    $token = $recuperacionService->generarTokenRecuperacion($email);
-                    
-                    if ($token) {
-                        error_log("Token generado exitosamente para: $email");
-                        echo json_encode([
-                            'mensaje' => 'Token de recuperación generado',
-                            'token' => $token
-                        ]);
-                    } else {
-                        error_log("Fallo al generar token para: $email");
-                        http_response_code(500);
-                        echo json_encode(['error' => 'No se pudo generar el token']);
-                    }
+        case 'solicitar_recuperacion':
+            if ($metodo === 'POST') {
+                $datos = json_decode(file_get_contents('php://input'), true);
+                $email = $datos['email'] ?? '';
+
+                error_log("Solicitud de recuperación para: $email");
+
+                if (!Validador::validarEmail($email)) {
+                    error_log("Email inválido: $email");
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Email inválido']);
+                    break;
                 }
-                break;
+
+                $token = $recuperacionService->generarTokenRecuperacion($email);
+
+                if ($token) {
+                    error_log("Token generado exitosamente para: $email");
+                    echo json_encode([
+                        'mensaje' => 'Token de recuperación generado',
+                        'token' => $token
+                    ]);
+                } else {
+                    error_log("Fallo al generar token para: $email");
+                    http_response_code(500);
+                    echo json_encode(['error' => 'No se pudo generar el token']);
+                }
+            }
+            break;
 
         case 'restablecer_contrasena':
             if ($metodo === 'POST') {
@@ -131,7 +135,8 @@ try {
                 $nuevaContrasena = $datos['nueva_contrasena'] ?? '';
 
                 $errores = Validador::validarCamposObligatorios([
-                    'token', 'nueva_contrasena'
+                    'token',
+                    'nueva_contrasena'
                 ], $datos);
 
                 if (!empty($errores)) {
@@ -147,22 +152,23 @@ try {
                 }
 
                 $resultado = $recuperacionService->restablecerContrasena($token, $nuevaContrasena);
-                
-                echo json_encode($resultado 
-                    ? ['mensaje' => 'Contraseña restablecida exitosamente']
-                    : ['error' => 'No se pudo restablecer la contraseña']
+
+                echo json_encode(
+                    $resultado
+                        ? ['mensaje' => 'Contraseña restablecida exitosamente']
+                        : ['error' => 'No se pudo restablecer la contraseña']
                 );
             }
             break;
 
-        // Rutas de Tareas (requieren autenticación)
         case 'crear_tarea':
             if ($metodo === 'POST') {
                 $usuarioId = $middleware->validarToken($token);
                 $datos = json_decode(file_get_contents('php://input'), true);
-                
+
                 $errores = Validador::validarCamposObligatorios([
-                    'titulo', 'descripcion'
+                    'titulo',
+                    'descripcion'
                 ], $datos);
 
                 if (!empty($errores)) {
@@ -186,9 +192,12 @@ try {
             if ($metodo === 'PUT') {
                 $usuarioId = $middleware->validarToken($token);
                 $datos = json_decode(file_get_contents('php://input'), true);
-                
+
                 $errores = Validador::validarCamposObligatorios([
-                    'id', 'titulo', 'descripcion', 'estado'
+                    'id',
+                    'titulo',
+                    'descripcion',
+                    'estado'
                 ], $datos);
 
                 if (!empty($errores)) {
@@ -205,7 +214,7 @@ try {
             if ($metodo === 'DELETE') {
                 $usuarioId = $middleware->validarToken($token);
                 $tareaId = $_GET['id'] ?? null;
-                
+
                 if (!$tareaId) {
                     http_response_code(400);
                     echo json_encode(['error' => 'ID de tarea no proporcionado']);
@@ -221,7 +230,6 @@ try {
             echo json_encode(['error' => 'Endpoint no encontrado']);
             break;
     }
-
 } catch (Exception $e) {
     // Manejo de errores inesperados
     error_log($e->getMessage());

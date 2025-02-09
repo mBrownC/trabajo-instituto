@@ -1,23 +1,27 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-class EmailService {
+class EmailService
+{
     private $mail;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->mail = new PHPMailer(true);
         $this->configurarSMTP();
     }
 
-    private function configurarSMTP() {
+    private function configurarSMTP()
+    {
         try {
             // Configuración detallada de depuración
             $this->mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
-            $this->mail->Debugoutput = function($str, $level) {
+            $this->mail->Debugoutput = function ($str, $level) {
                 error_log("SMTP DEBUG: $str");
             };
 
@@ -46,7 +50,8 @@ class EmailService {
         }
     }
 
-    public function enviarCorreoRecuperacion($destinatario, $token) {
+    public function enviarCorreoRecuperacion($destinatario, $token)
+    {
         try {
             // Limpiar configuraciones previas
             $this->mail->clearAllRecipients();
@@ -55,9 +60,9 @@ class EmailService {
 
             $this->mail->addAddress($destinatario);
             $this->mail->Subject = 'Recuperación de Contraseña - Zapatos3000';
-            
+
             $enlaceRecuperacion = "http://localhost/proyecto_zapatos3000/frontend/recuperar-contrasena.html?token=" . $token;
-            
+
             $cuerpo = "
             <html>
             <body>
@@ -70,13 +75,13 @@ class EmailService {
             </body>
             </html>
             ";
-            
+
             $this->mail->Body = $cuerpo;
             $this->mail->AltBody = strip_tags($cuerpo);
 
             // Intentar enviar
             $resultado = $this->mail->send();
-            
+
             // Registro detallado
             error_log("Intento de envío de correo a: " . $destinatario);
             error_log("Token de recuperación: " . $token);
@@ -92,7 +97,8 @@ class EmailService {
     }
 
     // Método de prueba con más detalle
-    public function probarConfiguracion() {
+    public function probarConfiguracion()
+    {
         try {
             $this->mail->clearAllRecipients();
             $this->mail->addAddress($_ENV['EMAIL_USER']);

@@ -66,15 +66,36 @@
                 <h1>Mis Tareas</h1>
                 <div class="nueva-tarea">
                     <input type="text" id="tarea-titulo"
-                        placeholder="Título de la tarea">
+                        placeholder="Título de la tarea"><br>
                     <textarea id="tarea-descripcion"
-                        placeholder="Descripción"></textarea>
+                        placeholder="Descripción"></textarea><br>
                     <button id="crear-tarea">Crear Tarea</button>
                 </div>
                 <div id="lista-tareas">
                     <!-- Tareas se cargarán dinámicamente -->
                 </div>
                 <button id="cerrar-sesion">Cerrar Sesión</button>
+            </div>
+        </div>ç
+        <!-- Modal de Edición de Tarea -->
+        <div id="editar-tarea-modal" class="modal" style="display:none;">
+            <div class="modal-contenido">
+                <span class="cerrar"
+                    onclick="document.getElementById('editar-tarea-modal').style.display='none'">&times;</span>
+                <h2>Editar Tarea</h2>
+                <form id="editar-tarea-form">
+                    <input type="hidden" id="editar-tarea-id">
+                    <input type="text" id="editar-tarea-titulo"
+                        placeholder="Título" required>
+                    <textarea id="editar-tarea-descripcion"
+                        placeholder="Descripción" required></textarea>
+                    <select id="editar-tarea-estado">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en_progreso">En Progreso</option>
+                        <option value="completada">Completada</option>
+                    </select>
+                    <button type="submit">Guardar Cambios</button>
+                </form>
             </div>
         </div>
         <script>
