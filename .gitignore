@@ -1,0 +1,58 @@
+# Ignorar archivos de sistema y entorno
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# Ignorar configuraciones de IDEs y editores
+.vscode/
+.idea/
+*.iml
+
+# Ignorar dependencias de Composer
+/vendor/
+composer.lock
+
+# Ignorar dependencias de Node.js (si usas npm/yarn en el frontend)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ignorar caché y logs de PHP
+*.log
+storage/logs/
+storage/framework/
+storage/cache/
+storage/debugbar/
+bootstrap/cache/
+
+# Ignorar archivos de sesión y temporales
+session/
+tmp/
+temp/
+*.swp
+*.swo
+
+# Ignorar subidas de usuarios (si aplicable)
+public/uploads/
+public/storage/
+public/images/uploads/
+
+# Ignorar bases de datos locales (si usas SQLite o bases locales)
+*.sqlite
+*.sqlite3
+database/database.sqlite
+
+# Ignorar archivos de respaldo o exportaciones de bases de datos SQL
+*.sql
+*.sql.gz
+*.bak
+*.bak.gz
+
+# Ignorar archivos de Netlify/Vercel si usas hosting frontend
+.netlify/
+.vercel/
+
+# Ignorar archivos de despliegue si usas Laravel Forge u otros
+.deploy/
+dep/
