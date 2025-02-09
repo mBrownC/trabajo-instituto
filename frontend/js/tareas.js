@@ -1,5 +1,3 @@
-const API_URL = 'http://localhost/proyecto_zapatos3000/public/index.php';
-
 async function crearTarea(titulo, descripcion) {
     const token = localStorage.getItem('token');
 

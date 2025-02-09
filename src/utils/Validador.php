@@ -6,10 +6,9 @@ class Validador {
     }
 
     public static function validarContrasena($password) {
-        // Mínimo 8 caracteres, al menos una mayúscula, una minúscula y un número
-        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/', $password);
+        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\W]{8,}$/', $password);
     }
-
+    
     public static function sanitizarEntrada($entrada) {
         return htmlspecialchars(strip_tags(trim($entrada)));
     }

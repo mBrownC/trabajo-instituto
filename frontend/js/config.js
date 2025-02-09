@@ -1,0 +1,1 @@
+const API_URL = 'http://localhost/proyecto_zapatos3000/public/index.php';

@@ -1,18 +1,23 @@
 <?php
-// Configuración de headers para API RESTful
-header('Content-Type: application/json');
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/utils/SistemaInicial.php';
+
+// Configuración de CORS
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Manejar solicitudes OPTIONS para CORS
+// Para solicitudes OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Cargar autoload de Composer
-require_once __DIR__ . '/../vendor/autoload.php';
+// Inicializar sistema si es necesario
+$sistemaInicial = new SistemaInicial();
+$claveAdmin = 'Zapatos3000Admin2024!';
+$resultado = $sistemaInicial->inicializarSistema($claveAdmin);
+error_log("Resultado de inicialización: " . ($resultado ? 'Éxito' : 'No se insertó'));
 
 // Cargar controladores y servicios
 require_once __DIR__ . '/../src/controllers/UsuarioController.php';
@@ -89,31 +94,35 @@ try {
             }
             break;
 
-        case 'solicitar_recuperacion':
-            if ($metodo === 'POST') {
-                $datos = json_decode(file_get_contents('php://input'), true);
-                $email = $datos['email'] ?? '';
-                
-                if (!Validador::validarEmail($email)) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Email inválido']);
-                    break;
+            case 'solicitar_recuperacion':
+                if ($metodo === 'POST') {
+                    $datos = json_decode(file_get_contents('php://input'), true);
+                    $email = $datos['email'] ?? '';
+                    
+                    error_log("Solicitud de recuperación para: $email");
+            
+                    if (!Validador::validarEmail($email)) {
+                        error_log("Email inválido: $email");
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Email inválido']);
+                        break;
+                    }
+            
+                    $token = $recuperacionService->generarTokenRecuperacion($email);
+                    
+                    if ($token) {
+                        error_log("Token generado exitosamente para: $email");
+                        echo json_encode([
+                            'mensaje' => 'Token de recuperación generado',
+                            'token' => $token
+                        ]);
+                    } else {
+                        error_log("Fallo al generar token para: $email");
+                        http_response_code(500);
+                        echo json_encode(['error' => 'No se pudo generar el token']);
+                    }
                 }
-
-                $token = $recuperacionService->generarTokenRecuperacion($email);
-                
-                if ($token) {
-                    // TODO: Implementar envío de correo electrónico
-                    echo json_encode([
-                        'mensaje' => 'Token de recuperación generado',
-                        'token' => $token // Solo para pruebas
-                    ]);
-                } else {
-                    http_response_code(500);
-                    echo json_encode(['error' => 'No se pudo generar el token']);
-                }
-            }
-            break;
+                break;
 
         case 'restablecer_contrasena':
             if ($metodo === 'POST') {

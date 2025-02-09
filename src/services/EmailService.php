@@ -15,31 +15,48 @@ class EmailService {
 
     private function configurarSMTP() {
         try {
-            // Configuración del servidor SMTP
+            // Configuración detallada de depuración
+            $this->mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
+            $this->mail->Debugoutput = function($str, $level) {
+                error_log("SMTP DEBUG: $str");
+            };
+
             $this->mail->isSMTP();
             $this->mail->Host       = 'smtp.gmail.com';
             $this->mail->SMTPAuth   = true;
             $this->mail->Username   = $_ENV['EMAIL_USER'];
             $this->mail->Password   = $_ENV['EMAIL_PASS'];
-            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $this->mail->Port       = 465;
+            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Cambiar a STARTTLS
+            $this->mail->Port       = 587; // Puerto para TLS
+
+            // Configuraciones de seguridad
+            $this->mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+
             $this->mail->setFrom($_ENV['EMAIL_USER'], 'Zapatos3000');
             $this->mail->isHTML(true);
         } catch (Exception $e) {
             error_log("Error configurando SMTP: " . $e->getMessage());
+            throw $e;
         }
     }
 
     public function enviarCorreoRecuperacion($destinatario, $token) {
         try {
-            // Limpiar cualquier destinatario previo
-            $this->mail->clearAddresses();
-            
+            // Limpiar configuraciones previas
+            $this->mail->clearAllRecipients();
+            $this->mail->clearAttachments();
+            $this->mail->clearCustomHeaders();
+
             $this->mail->addAddress($destinatario);
             $this->mail->Subject = 'Recuperación de Contraseña - Zapatos3000';
             
-            // Construir el enlace de recuperación
-            $enlaceRecuperacion = "http://localhost:8000/recuperar-contrasena?token=" . $token;
+            $enlaceRecuperacion = "http://localhost/proyecto_zapatos3000/frontend/recuperar-contrasena.html?token=" . $token;
             
             $cuerpo = "
             <html>
@@ -55,36 +72,39 @@ class EmailService {
             ";
             
             $this->mail->Body = $cuerpo;
+            $this->mail->AltBody = strip_tags($cuerpo);
 
-            return $this->mail->send();
+            // Intentar enviar
+            $resultado = $this->mail->send();
+            
+            // Registro detallado
+            error_log("Intento de envío de correo a: " . $destinatario);
+            error_log("Token de recuperación: " . $token);
+            error_log("Resultado del envío: " . ($resultado ? 'Exitoso' : 'Fallido'));
+
+            return $resultado;
         } catch (Exception $e) {
-            error_log("Error enviando correo: " . $e->getMessage());
+            // Registro detallado de errores
+            error_log("Excepción al enviar correo: " . $e->getMessage());
+            error_log("Trace: " . $e->getTraceAsString());
             return false;
         }
     }
 
-    public function enviarCorreoConfirmacion($destinatario, $nombre) {
+    // Método de prueba con más detalle
+    public function probarConfiguracion() {
         try {
-            $this->mail->clearAddresses();
-            
-            $this->mail->addAddress($destinatario);
-            $this->mail->Subject = 'Bienvenido a Zapatos3000';
-            
-            $cuerpo = "
-            <html>
-            <body>
-                <h2>¡Bienvenido a Zapatos3000, {$nombre}!</h2>
-                <p>Tu cuenta ha sido creada exitosamente.</p>
-                <p>Esperamos que disfrutes de nuestros servicios.</p>
-            </body>
-            </html>
-            ";
-            
-            $this->mail->Body = $cuerpo;
+            $this->mail->clearAllRecipients();
+            $this->mail->addAddress($_ENV['EMAIL_USER']);
+            $this->mail->Subject = 'Prueba de Configuración SMTP - Zapatos3000';
+            $this->mail->Body = 'Este es un correo de prueba para verificar la configuración SMTP.';
 
-            return $this->mail->send();
+            $resultado = $this->mail->send();
+            error_log("Prueba de configuración: " . ($resultado ? 'Exitosa' : 'Fallida'));
+            return $resultado;
         } catch (Exception $e) {
-            error_log("Error enviando correo de confirmación: " . $e->getMessage());
+            error_log("Error en prueba de configuración: " . $e->getMessage());
+            error_log("Trace: " . $e->getTraceAsString());
             return false;
         }
     }

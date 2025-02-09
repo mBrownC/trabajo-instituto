@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+</head>
+<body>
+    <h1>Recuperar Contraseña</h1>
+    <form id="recuperacion-form">
+        <input type="hidden" id="token" name="token">
+        <input type="password" id="nueva-password" placeholder="Nueva Contraseña" required>
+        <input type="password" id="confirmar-password" placeholder="Confirmar Contraseña" required>
+        <button type="submit">Restablecer Contraseña</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = new URLSearchParams(window.location.search).get('token');
+            document.getElementById('token').value = token;
+
+            const form = document.getElementById('recuperacion-form');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nuevaPassword = document.getElementById('nueva-password').value;
+                const confirmarPassword = document.getElementById('confirmar-password').value;
+
+                if (nuevaPassword !== confirmarPassword) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('http://localhost/proyecto_zapatos3000/public/index.php?accion=restablecer_contrasena', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            token: token,
+                            nueva_contrasena: nuevaPassword
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.mensaje) {
+                        alert(data.mensaje);
+                        window.location.href = 'index.html';
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al restablecer la contraseña');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
