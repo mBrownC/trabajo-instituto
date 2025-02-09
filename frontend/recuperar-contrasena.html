@@ -1,60 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Recuperar Contraseña</title>
-</head>
-<body>
-    <h1>Recuperar Contraseña</h1>
-    <form id="recuperacion-form">
-        <input type="hidden" id="token" name="token">
-        <input type="password" id="nueva-password" placeholder="Nueva Contraseña" required>
-        <input type="password" id="confirmar-password" placeholder="Confirmar Contraseña" required>
-        <button type="submit">Restablecer Contraseña</button>
-    </form>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Recuperar Contraseña</title>
+    </head>
+    <body>
+        <h1>Recuperar Contraseña</h1>
+        <form id="recuperacion-form">
+            <input type="hidden" id="token" name="token" />
+            <div class="password-container">
+                <input
+                    type="password"
+                    id="nueva-password"
+                    placeholder="Nueva Contraseña"
+                    required />
+                <span id="toggle-nueva-password" class="eye-icon">👁️</span>
+            </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = new URLSearchParams(window.location.search).get('token');
-            document.getElementById('token').value = token;
+            <div class="password-container">
+                <input
+                    type="password"
+                    id="confirmar-password"
+                    placeholder="Confirmar Contraseña"
+                    required />
+                <span id="toggle-confirmar-password" class="eye-icon">👁️</span>
+            </div>
 
-            const form = document.getElementById('recuperacion-form');
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const nuevaPassword = document.getElementById('nueva-password').value;
-                const confirmarPassword = document.getElementById('confirmar-password').value;
+            <button type="submit">Restablecer Contraseña</button>
+        </form>
 
-                if (nuevaPassword !== confirmarPassword) {
-                    alert('Las contraseñas no coinciden');
-                    return;
+        <script>
+        document
+            .getElementById("toggle-nueva-password")
+            .addEventListener("click", function () {
+            var nuevaPasswordField = document.getElementById("nueva-password");
+            var type =
+                nuevaPasswordField.type === "password" ? "text" : "password";
+            nuevaPasswordField.type = type;
+            });
+
+        document
+            .getElementById("toggle-confirmar-password")
+            .addEventListener("click", function () {
+            var confirmarPasswordField =
+                document.getElementById("confirmar-password");
+            var type =
+                confirmarPasswordField.type === "password" ? "text" : "password";
+            confirmarPasswordField.type = type;
+            });
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = new URLSearchParams(window.location.search).get("token");
+            document.getElementById("token").value = token;
+
+            const form = document.getElementById("recuperacion-form");
+            form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nuevaPassword = document.getElementById("nueva-password").value;
+            const confirmarPassword =
+                document.getElementById("confirmar-password").value;
+
+            if (nuevaPassword !== confirmarPassword) {
+                alert("Las contraseñas no coinciden");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                "http://localhost/proyecto_zapatos3000/public/index.php?accion=restablecer_contrasena",
+                {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                    token: token,
+                    nueva_contrasena: nuevaPassword,
+                    }),
                 }
+                );
 
-                try {
-                    const response = await fetch('http://localhost/proyecto_zapatos3000/public/index.php?accion=restablecer_contrasena', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            token: token,
-                            nueva_contrasena: nuevaPassword
-                        })
-                    });
+                const data = await response.json();
 
-                    const data = await response.json();
-
-                    if (data.mensaje) {
-                        alert(data.mensaje);
-                        window.location.href = 'index.html';
-                    } else {
-                        alert(data.error);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Ocurrió un error al restablecer la contraseña');
+                if (data.mensaje) {
+                alert(data.mensaje);
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = "index.html";
+                } else {
+                alert(data.error);
                 }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Ocurrió un error al restablecer la contraseña");
+            }
             });
         });
     </script>
-</body>
+    </body>
 </html>

@@ -57,3 +57,32 @@ button:hover {
     margin-bottom: 10px;
     border-radius: 4px;
 }
+
+.password-container {
+    position: relative;
+    width: 90%;
+}
+
+#registro-password {
+    width: 100%;
+    padding-right: 30px;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#login-password {
+    width: 100%;
+    padding-right: 30px;
+}
+
+input[type="password"] {
+    width: 100%;
+    padding-right: 30px;
+}
